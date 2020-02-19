@@ -1,0 +1,82 @@
+<html>
+
+<head>
+    <title>拼装瓶瓶</title>
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #eee;
+        }
+
+        .container {
+            width: 30em;
+            margin-top: 5%;
+            background: white;
+            padding: 15px;
+        }
+    </style>
+</head>
+
+<body onload='update()'>
+    <div style='display:none'>
+        <img src="bottle.png" id='img1'>
+        <img src="water.png" id='img2'>
+    </div>
+    <div class='container'>
+        <div class='row'>
+            <canvas width=130 height=200 id='canvas' class='mx-auto'></canvas>
+        </div>
+        <br>
+        <div class='row'>
+            <div class='col-sm-2'>
+                <label for="color" id='label_color'>颜色:</label>
+            </div>
+            <div class='col-sm-10'>
+                <input type="color" id='color' value='#0000ff' class='form-control' onchange='update()'>
+            </div>
+        </div>
+        <br>
+        <div>
+            <label for="color" id='label_slider'>容量:%</label>
+            <input type="range" id='slider' min='0' max='100' step='1' value="50" list="tick" class='form-control'
+                onchange='update()'>
+            <datalist id="tick">
+            </datalist>
+        </div>
+    </div>
+    <script>
+        for (var i = 0; i <= 100; i += 10) {
+            var tmp = document.createElement('option')
+            tmp.value = i
+            document.getElementById("tick").appendChild(tmp)
+        }
+        var cv = document.getElementById('canvas'),
+            ct = cv.getContext('2d'),
+            img_bottle = document.getElementById('img1'),
+            img_water = document.getElementById('img2')
+        function drawBottle(color, value) {
+            var MAX = -155,
+                MIN = 10
+            var dy = MIN + (MAX - MIN) * value / 100
+            cv.style.background = color
+            ct.fillStyle = color
+            ct.rect(0, 0, 130, 200)
+            ct.fill()
+            ct.drawImage(img_water, 0, dy)
+            ct.drawImage(img_bottle, 0, 0)
+        }
+        function update() {
+            var clr = document.getElementById('color').value,
+                val = document.getElementById('slider').value
+            drawBottle(clr, val)
+            document.getElementById('label_slider').innerText = `容量: ${val}%`
+        }
+        var slider = document.getElementById('slider'),
+            sliderPressed = false
+        slider.addEventListener('mousedown', () => { sliderPressed = true })
+        slider.addEventListener('mouseup', () => { sliderPressed = false })
+        slider.addEventListener('mousemove', () => { if (sliderPressed) update() })
+    </script>
+</body>
+
+</html>
